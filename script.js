@@ -1,15 +1,5 @@
-addSyncButton()
-changeUpdate()
+setInterval(addSyncButton, 1000)
 
-function changeUpdate() {
-    window.app.rooms.teambuilder.oldUpdate = window.app.rooms.teambuilder.update
-    window.app.rooms.teambuilder.update = function() {
-        window.app.rooms.teambuilder.oldUpdate()
-        addSyncButton()
-    }
-}
-// Takes object from unpackAllTeams() and extracts name from it
-// returns true if sucessful, false if duplicate
 function addTeam(team) {
     document.dispatchEvent(new CustomEvent('storage_set', {
         detail: team
@@ -17,11 +7,12 @@ function addTeam(team) {
 }
 
 function addSyncButton() {
-    if (window.app.rooms.teambuilder.curTeam == null) {
+    if ('teambuilder' in app.rooms && app.rooms.teambuilder.curTeam == null && !$('#sync').length) {
         var backupbutton = document.getElementsByName('backup')[0]
         var syncbutton = document.createElement('button')
         syncbutton.innerHTML = '\n<i class="fa fa-upload"></i> Synchronize all teams'
         syncbutton.className = 'button'
+        syncbutton.id = 'sync'
         syncbutton.onclick = function() {
             syncTeam()
         };
@@ -34,7 +25,6 @@ function syncTeam() {
     debug_upteams()
     debug_downteams()
 }
-
 
 function debug_upteams() {
     addTeam(Storage.teams)
