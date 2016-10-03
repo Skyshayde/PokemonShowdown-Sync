@@ -1,6 +1,10 @@
-# PokemonShowdown-Sync
-Chrome extension to synchronize Pokemon Showdown teams.  I'm pretty sure it works right now but I need to iron out a bunch of bugs before it is finished.  
+PokemonShowdown-Sync
+======
+Chrome extension to synchronize teams on Pokemon Showdown
+
+## Download
+At the moment, just download this and add it as a folder.  I will upload it to the web store as soon as it is done
+
 
 ## Usage
-
-call the function syncTeams() in the dev console to synchronize.  There is a button for it, but it only appears when you refresh the page on the teambuilder.  
+Just have it running while Pokemon Showdown is open.  Make sure you are logged in to Chrome so the extension can upload the teams.  
