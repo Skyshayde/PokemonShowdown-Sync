@@ -26,9 +26,10 @@
             "https://play.pokemonshowdown.com/*"
         ],
         "js": [
-            "src/inject/inject.js",
-            "md5.min.js"
+            "md5.min.js",
+            "src/scripts/script.js",
+            "src/scripts/util.js"
         ]
     }],
-    "web_accessible_resources": ["script.js", "md5.min.js"]
+    "web_accessible_resources": ["src/inject/inject.js", "md5.min.js"]
 }
