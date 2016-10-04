@@ -12,62 +12,31 @@ chrome.extension.sendMessage({}, function(response) {
     }, 10);
 });
 document.addEventListener('sync', function(e) {
-    if (!e.detail.inTeam || !e.detail.LAST_SYNC) {
-        console.log('failing');
-        return false;
-    }
-    console.log(relativeComplement(e.detail.inTeam, e.detail.LAST_SYNC))
-    console.log(relativeComplement(e.detail.LAST_SYNC, e.detail.inTeam))
-    addTeams(relativeComplement(e.detail.inTeam, e.detail.LAST_SYNC))
-    removeTeams(relativeComplement(e.detail.LAST_SYNC, e.detail.inTeam))
-    // getTeams()
-});
-document.addEventListener('storage_get', function() {
-    getTeams()
-});
-document.addEventListener('storage_set', function(e) {
-    addTeams(e.detail)
+    if (!e.detail.inTeam || !e.detail.LAST_SYNC) return false;
+    syncTeams(e.detail.inTeam, relativeComplement(e.detail.LAST_SYNC, e.detail.inTeam))
 });
 
-function removeTeams(deleted) {
+function syncTeams(newTeams, deleted, callback) {
     chrome.storage.sync.get("teams", function(currTeams) {
-        if (typeof currTeams.teams == 'undefined') {
-            currTeams.teams = []
-            return true
-        } else {
-            currTeams = currTeams['teams']
-        }
-        chrome.storage.sync.set({
-            'teams': currTeams.filter(function(x) {
-                return deleted.indexOf(x) < 0
-            })
-        })
-    })
-}
-
-function addTeams(inTeam) {
-    chrome.storage.sync.get("teams", function(currTeams) {
-        inTeam.forEach(function(i) {
-            i.date = new Date().getTime()
-        })
         if (typeof currTeams.teams == 'undefined') {
             chrome.storage.sync.set({
-                'teams': inTeam
+                'teams': newTeams
             })
-            return true
         } else {
-            currTeams = currTeams['teams']
+            currTeams = currTeams.teams
         }
-        chrome.storage.sync.set({
-            'teams': uniq(inTeam.concat(currTeams))
+        var final = uniq(newTeams.concat(currTeams)).filter(function(el) {
+            if (el != {}) return true;
         })
-    })
-}
-
-function getTeams() {
-    chrome.storage.sync.get("teams", function(e) {
-        console.log(e['teams'])
-        document.dispatchEvent(new CustomEvent('receive_teams', {
+        // Remove teams if they are in the deleted list
+        final = final.filter(function(x) {
+            return deleted.indexOf(x) < 0
+        })
+        console.log(final)
+        chrome.storage.sync.set({
+            'teams': final
+        })
+        document.dispatchEvent(new CustomEvent('sync_down', {
             detail: e
         }));
     })
