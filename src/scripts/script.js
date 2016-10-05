@@ -13,10 +13,10 @@ chrome.extension.sendMessage({}, function(response) {
 });
 document.addEventListener('sync', function(e) {
     if (!e.detail.inTeam || !e.detail.LAST_SYNC) return false;
-    syncTeams(e.detail.inTeam, relativeComplement(e.detail.LAST_SYNC, e.detail.inTeam))
+    syncTeams(relativeComplement(e.detail.inTeam, e.detail.LAST_SYNC), relativeComplement(e.detail.LAST_SYNC, e.detail.inTeam))
 });
 
-function syncTeams(newTeams, deleted, callback) {
+function syncTeams(newTeams, deleted) {
     chrome.storage.sync.get("teams", function(currTeams) {
         if (typeof currTeams.teams == 'undefined') {
             chrome.storage.sync.set({
@@ -28,16 +28,63 @@ function syncTeams(newTeams, deleted, callback) {
         var final = uniq(newTeams.concat(currTeams)).filter(function(el) {
             if (el != {}) return true;
         })
-        // Remove teams if they are in the deleted list
-        final = final.filter(function(x) {
-            return deleted.indexOf(x) < 0
+        deleted_names = deleted.map(function(el) {
+            return el.name
         })
-        console.log(final)
+        final = final.filter(function(x) {
+            return deleted_names.indexOf(x.name) == -1
+        })
         chrome.storage.sync.set({
             'teams': final
         })
         document.dispatchEvent(new CustomEvent('sync_down', {
-            detail: e
+            detail: final
         }));
     })
 }
+// Return items which are in list a but not b
+function relativeComplement(a, b) {
+    var b_names = b.map(function(el) {
+        return el.name
+    })
+    var final = []
+    a.forEach(function(el, index) {
+        if (b_names.indexOf(el.name) == -1) {
+            final.push(el)
+        }
+    })
+    return final
+}
+// Removes duplicates from a
+function uniq(a) {
+    var indexes = []
+    a.sort(sortByName)
+    a.map(function(team, index) {
+        if (index == 0) {
+            return
+        }
+        if (a[index].name == a[index - 1].name) {
+            indexes.push(index)
+        }
+    })
+    indexes.reverse()
+    indexes.forEach(function(el) {
+        a.splice(el, 1)
+    })
+    return a
+}
+
+function sortByName(a, b) {
+    if (a.name == b.name) {
+        return 0
+    }
+    if (a.name > b.name) {
+        return 1
+    }
+    return -1
+}
+document.addEventListener('check_store', function() {
+    chrome.storage.sync.get("teams", function(currTeams) {
+        console.log(currTeams)
+    })
+});

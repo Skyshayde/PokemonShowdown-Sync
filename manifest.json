@@ -9,12 +9,6 @@
         "128": "icons/icon128.png"
     },
     "default_locale": "en",
-    "background": {
-        "scripts": [
-            "src/bg/background.js"
-        ],
-        "persistent": false
-    },
     "permissions": [
         "http://play.pokemonshowdown.com/",
         "https://play.pokemonshowdown.com/",
@@ -26,10 +20,8 @@
             "https://play.pokemonshowdown.com/*"
         ],
         "js": [
-            "md5.min.js",
-            "src/scripts/script.js",
-            "src/scripts/util.js"
+            "src/scripts/script.js"
         ]
     }],
-    "web_accessible_resources": ["src/inject/inject.js", "md5.min.js"]
+    "web_accessible_resources": ["src/inject/inject.js"]
 }
