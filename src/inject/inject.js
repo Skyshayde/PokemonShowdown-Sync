@@ -1,4 +1,5 @@
 var Sync = {}
+Sync.DEV = true;
 Sync.LAST_SYNC;
 Sync.trySync = function trySync() {
     // If neither exist yet, fail
@@ -20,6 +21,7 @@ Sync.doSync = function doSync() {
     Sync.LAST_SYNC = Storage.teams.slice();
 }
 document.addEventListener('sync_down', function(e) {
+    if (!typeof app.rooms.teambuilder == "undefined" && typeof app.rooms.teambuilder.curTeam == "undefined") return
     if (!e.detail) return
     Storage.teams = e.detail
     Storage.saveAllTeams()
@@ -30,8 +32,7 @@ document.addEventListener('update_ui', function() {
         app.tryJoinRoom('teambuilder')
     }
 });
-setInterval(Sync.trySync, 1000);
-setInterval(Sync.doSync, 30000);
+
 function test() {
-  document.dispatchEvent(new CustomEvent('check_store'))
+    document.dispatchEvent(new CustomEvent('check_store'))
 }
