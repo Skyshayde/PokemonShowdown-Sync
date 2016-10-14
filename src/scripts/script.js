@@ -17,8 +17,8 @@ document.addEventListener('sync', function(e) {
 });
 
 function syncTeams(newTeams, deleted) {
-    console.log("adding " + newTeams)
-    console.log("removing " + deleted)
+    console.log("adding " + JSON.stringify(newTeams))
+    console.log("removing " + JSON.stringify(deleted))
     chrome.storage.sync.get("teams", function(currTeams) {
         if (typeof currTeams.teams == 'undefined') {
             chrome.storage.sync.set({
